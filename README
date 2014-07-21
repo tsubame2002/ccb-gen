@@ -1,0 +1,5 @@
+##ccbファイルからcpp, hファイル作成
+	ruby ccbMake.rb ccbファイル名
+##空でcpp, hファイルを作成
+
+

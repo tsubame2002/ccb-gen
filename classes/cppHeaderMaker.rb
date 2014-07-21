@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require "./fileMaker"
+require_relative "./fileMaker"
 
 class CppHeaderMaker < FileMaker
 

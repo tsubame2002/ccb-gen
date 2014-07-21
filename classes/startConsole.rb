@@ -1,4 +1,4 @@
-require "./fileMakerConsole"
+require_relative "./fileMakerConsole"
 
 console = FileMakerConsole.new
 

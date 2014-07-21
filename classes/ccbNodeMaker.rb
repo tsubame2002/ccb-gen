@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require "./cppMaker"
+require_relative "./cppMaker"
 
 class CcbNodeMaker < CppMaker
 	@@ccbConfig

@@ -1,45 +1,38 @@
-require "./fileMakerConsole"
-require "./ccbNodeMaker"
-require "./ccbNodeHeaderMaker"
+require_relative "./fileMakerConsole"
+require_relative "./ccbNodeMaker"
+require_relative "./ccbNodeHeaderMaker"
 
 
-CCB_CONFIG_FILE = "ccbConfig.yml"
+CCB_CONFIG_FILE = File.expand_path(File.dirname(__FILE__) + "/../conf/ccbConfig.yml")
 
 class CcbFileMakerConsole < FileMakerConsole
+	def init
+		@animation = []
+		@callback = []
+	end
 	def displayStartMenu
 		system "clear"
 		displayStatus
-		displayClassName
 		displayMember
 		displayAnimation
 		displayCallback
 		displayMenu
 	end
-	def displayClassName
-		putsMagenta "[ClassName]"
-		puts "\s#{@className}"
-		puts
-	end
-	def displayMember
-		putsMagenta "[Member]"
-		@member.each do |key, value|
-			puts "\s#{value} : #{key}"
-		end
-		puts
-	end
 	def displayAnimation
-		putsMagenta "[Animation]"
-		@animation.each do |value|
-			puts "\s#{value}"
+		unless @animation.nil?
+			putsMagenta "[Animation]"
+			@animation.each do |value|
+				puts "\s#{value}"
+			end
 		end
-		puts
 	end
 	def displayCallback
-		putsMagenta "[AnimationCallBack]"
-		@callback.each do |value|
-			puts "\s#{value}"
+		unless @callback.nil?
+			putsMagenta "[AnimationCallBack]"
+			@callback.each do |value|
+				puts "\s#{value}"
+			end
 		end
-		puts
 	end
 	def selectSuperClass
 		system "clear"
@@ -73,6 +66,9 @@ class CcbFileMakerConsole < FileMakerConsole
 		end
 	end
 	def generateFile
+		unless isValid?
+			startMenu
+		end
 		loadCcbConfig
 
 		member = {}

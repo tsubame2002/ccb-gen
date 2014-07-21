@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require "./cppHeaderMaker"
+require_relative "./cppHeaderMaker"
 
 class CcbNodeHeaderMaker < CppHeaderMaker
 	@@ccbConfig

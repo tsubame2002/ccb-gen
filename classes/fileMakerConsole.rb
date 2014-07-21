@@ -1,10 +1,10 @@
 #!/usr/bin/ruby
 
 require 'yaml'
-require './ccbNodeMaker'
-require './ccbNodeHeaderMaker'
+require_relative './ccbNodeMaker'
+require_relative './ccbNodeHeaderMaker'
 
-CONFIG_FILE_NAME = "config.yml"
+CONFIG_FILE_NAME = File.expand_path(File.dirname(__FILE__) + "/../conf/config.yml")
 
 FILE_MAKER_TYPE = {
 	'CppMaker' => 1,
@@ -13,9 +13,10 @@ FILE_MAKER_TYPE = {
 START_MENU = {
 	'CHANGE_USER_NAME' => 1,
 	'CHANGE_PROJECT_NAME' => 2,
-	'CREATE_FILE' => 3,
-	'EXIT' => 4,
-	'MAX' => 5
+	'CHANGE_CLASS_NAME' => 3,
+	'CREATE_FILE' => 4,
+	'EXIT' => 5,
+	'MAX' => 6
 }
 
 class FileMakerConsole
@@ -25,6 +26,11 @@ class FileMakerConsole
 			'userName' => nil,
 			'projectName' => nil,
 		}
+		@className = nil
+		@member = []
+		init
+	end
+	def init
 	end
 
 	def startMenu
@@ -34,9 +40,12 @@ class FileMakerConsole
 	end
 
 	def generateFile
-		inputClassName
-		chooseMaker
-		@maker.generateFile
+		if isValid?
+			chooseMaker
+			@maker.generateFile
+		else
+			startMenu
+		end
 	end
 	def getFileName
 		return @className + @fileType
@@ -54,18 +63,24 @@ private
 		putsMagenta "[MENU]"
 		puts "\s1 : Change User Name"
 		puts "\s2 : Change Project Name"
-		puts "\s3 : Create File"
-		puts "\s4 : Exit"
+		puts "\s3 : Change Class Name"
+		puts "\s4 : Create File"
+		puts "\s5 : Exit"
 		puts
 		printYellow "Select number : "
 	end
 	def displayStatus
 		putsMagenta "[Status]"
-		userName = @config['userName'].nil? ? "not defined" : @config['userName']
-		puts "\sUserName : #{@config['userName']}"
-		projectName = @config['projectName'].nil? ? "not defined" : @config['projectName']
-		puts "\sProjectName : #{@config['projectName']}"
+		puts "\sUserName : #{nilCheck(@config['userName'])}"
+		puts "\sProjectName : #{nilCheck(@config['projectName'])}"
+		puts "\sClassName : #{nilCheck(className)}"
 		puts
+	end
+	def displayMember
+		putsMagenta "[Member]"
+		@member.each do |key, value|
+			puts "\s#{value} : #{key}"
+		end
 	end
 
 	def runMenuItem
@@ -82,6 +97,9 @@ private
 					startMenu
 				when START_MENU['CHANGE_PROJECT_NAME']
 					inputProjectName
+					startMenu
+				when START_MENU['CHANGE_CLASS_NAME']
+					inputClassName
 					startMenu
 				when START_MENU['CREATE_FILE']
 					generateFile
@@ -111,7 +129,7 @@ private
 		puts
 	end
 	def inputClassName
-		printYellow "Enter Class Name ex. HogeClass : "
+		printYellow "Enter Class Name : "
 		_inputClassName
 	end
 	def _inputClassName
@@ -123,6 +141,13 @@ private
 		else
 			puts "Enter Class Name using half-width characters"
 			_inputClassName
+		end
+	end
+	def isValid?
+		unless @config['userName'].nil? || @config['projectName'].nil? || @className.nil?
+			return true
+		else
+			return false
 		end
 	end
 	def chooseMaker
@@ -159,6 +184,9 @@ private
 		end
 	end
 
+	def nilCheck comment
+		comment = comment.nil? ? "\e[31mnot defined\e[0m" : comment
+	end
 
 	def putsYellow comment
 		puts "\e[33m" + comment + "\e[0m"

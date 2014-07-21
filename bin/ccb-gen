@@ -1,0 +1,19 @@
+#!/usr/bin/ruby
+
+
+if ARGV[0].nil?
+	consolePath = File.expand_path(File.dirname(__FILE__) + "/../classes/startCcbConsole.rb")
+	exec("ruby #{consolePath}")
+else
+	consolePath = File.expand_path(File.dirname(__FILE__) + "/../classes/ccbMake.rb")
+	rootPath = %x("pwd")
+	rootPath = rootPath.strip!
+	ccbFilePath = "#{rootPath}/#{ARGV[0]}"
+	ccbFilePath.strip!
+	ccbFilePath = ccbFilePath.gsub(/\/\//) {|w| "/"}
+	ccbFilePath = ccbFilePath.gsub(/\/\//) {|w| "/"}
+	ccbFilePath = ccbFilePath.gsub(/\/\//) {|w| "/"}
+	ccbFilePath = ccbFilePath.gsub(/\/\//) {|w| "/"}
+	exec("ruby #{consolePath} #{ccbFilePath}")
+end
+

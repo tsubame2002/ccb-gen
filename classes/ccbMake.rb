@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-require "./ccbFileMakerConsole"
+require_relative "./ccbFileMakerConsole"
 
 ccbFileName = ARGV[0]
 ccbFile = open(ccbFileName, "r")
