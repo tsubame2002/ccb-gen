@@ -32,6 +32,10 @@ private
 		"\n"
 	end
 
+	def makeMethod param, methodContext = ""
+		""
+	end
+
 	def makeMethodComment methodName
 		now = Time.now
 		methodComment = 
@@ -57,5 +61,10 @@ private
 		word = word.gsub(/^[A-Za-z]/){|w| w.downcase}
 		word = word.gsub(/[A-Z]/){|w| "_" + w}
 		word = word.upcase
+	end
+	def ymlFilter word
+		word=word.gsub(/\$this\$/) { |w| "#{@className}"}
+		word=word.gsub(/\$n\$/) { |w| "\n"}
+		word=word.gsub(/\$t\$/) { |w| "\t"}
 	end
 end

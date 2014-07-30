@@ -144,7 +144,10 @@ class CppHeaderMaker < FileMaker
 			methodText += "virtual\s"
 		end
 		#return param
-		methodText += param["return"] + "\s"
+		if param["static"] == 1
+			methodText += "static\s"
+		end
+		methodText += ymlFilter(param["return"]) + "\s"
 		#methodName
 		methodText += param["name"]
 

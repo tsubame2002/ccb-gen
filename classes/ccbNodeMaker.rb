@@ -20,8 +20,6 @@ class CcbNodeMaker < CppMaker
 		makeClear+
 		makeDestroy+
 
-		loadCcb+
-
 		animationMethod+
 		callbackMethod+
 
@@ -32,31 +30,6 @@ class CcbNodeMaker < CppMaker
 	end
 	def loadCcbConfig
 		@ccbConfig = YAML.load_file(CCB_CONFIG_FILE)
-	end
-	def loadCcb
-		loadCcbContext = ""
-		if @member.has_value?("SuperButton*")
-			loadCcbContext += "\t_setSuperButtonListener(name, pNode);\n\n"
-		end
-
-		@member.each do |key, value|
-			if value != "SuperButton*"
-				ccbKey = key.sub(/m_/,'')
-				loadCcbContext += "\tDIALOG_REGISTER_VARIABLE_NODE(this, \"#{ccbKey}\", #{value}, #{key});\n"
-			end
-		end
-		loadCcbContext += "\n\treturn\sfalse;\n"
-		param = {
-			'virtual' => 1,
-			'return' => 'bool',
-			'name' => 'onRegisterVariable',
-			'args' => [
-				{'type' => 'Ref*', 'name' => 'pTarget'},
-				{'type' => 'const char*', 'name' => 'name'},
-				{'type' => 'Node*', 'name' => 'pNode'}
-			]
-		}
-		return makeMethod(param, loadCcbContext)
 	end
 	def makeClear
 		clearMehodContext = ""
@@ -131,11 +104,15 @@ class CcbNodeMaker < CppMaker
 	end
 
 	def makeMethod param, methodContext = ""
+		if param.key?("context")
+			methodContext = ymlFilter(param["context"])
+		end
 		methodContext = checkSuperButton(param, methodContext)
 		methodContext = checkAnimation(param, methodContext)
+		methodContext = checkRegisterVariable(param, methodContext)
 		methodText = makeMethodComment(param["name"])
 		#return param
-		methodText += param["return"] + "\s"
+		methodText += ymlFilter(param["return"]) + "\s"
 		#ClassName
 		methodText += @className + "::"
 		#methodName
@@ -162,6 +139,24 @@ class CcbNodeMaker < CppMaker
 		methodText += "}\n"
 		methodText += "\n"
 		return methodText
+	end
+	def checkRegisterVariable param, methodContext
+		if(param['name'] == "onRegisterVariable" || param['name'] == "onAssignCCBMemberVariable")
+			if @member.has_value?("SuperButton*")
+				methodContext += "\t_setSuperButtonListener(name, pNode);\n\n"
+			end
+			@member.each do |key, value|
+				if value != "SuperButton*"
+					ccbKey = key.sub(/m_/,'')
+					methodContext += "\tDIALOG_REGISTER_VARIABLE_NODE(this, \"#{ccbKey}\", #{value}, #{key});\n"
+				end
+			end
+			methodContext += "\n\treturn\sfalse;\n"
+		end
+		if(param['name'] == "onAssignCCBCustomProperty")
+			methodContext += "\n\treturn\sfalse;\n"
+		end
+		return methodContext
 	end
 	def checkAnimation param, methodContext
 		if(param['name'] == "completedAnimationSequenceNamed")

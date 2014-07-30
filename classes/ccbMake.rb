@@ -134,6 +134,7 @@ class CcbData
 		@animation = []
 		@callback = []
 		@loopCnt = 0
+		@customClasses = []
 	end
 	def calcCcbData array
 		@loopCnt += 1
@@ -175,9 +176,10 @@ class CcbData
 				if node[KEY_NAME[:ASSIGN_TYPE]] != DONT_ASSGIN
 					unless node[KEY_NAME[:ASSIGN_NAME]].empty?
 						if node[KEY_NAME[:CUSTOM_CLASS]].empty?
-								@member[node[KEY_NAME[:ASSIGN_NAME]]] = node[KEY_NAME[:BASE_CLASS]]
+							@member[node[KEY_NAME[:ASSIGN_NAME]]] = node[KEY_NAME[:BASE_CLASS]]
 						else
 							@member[node[KEY_NAME[:ASSIGN_NAME]]] = node[KEY_NAME[:CUSTOM_CLASS]]
+							@customClasses.push node[KEY_NAME[:CUSTOM_CLASS]]
 						end
 					end
 				end
@@ -192,7 +194,7 @@ class CcbData
 		end
 		@loopCnt -= 1
 	end
-	attr_accessor :member, :rootClassName, :rootFlg, :animation, :callback
+	attr_accessor :member, :rootClassName, :rootFlg, :animation, :callback, :customClasses
 end
 ccbData = CcbData.new
 ccbData.calcCcbData(result)
@@ -203,4 +205,5 @@ console.member = ccbData.member
 console.className = ccbData.rootClassName
 console.animation = ccbData.animation
 console.callback = ccbData.callback
+console.customClasses = ccbData.customClasses.uniq
 console.startMenu

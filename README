@@ -1,5 +1,19 @@
-##ccbファイルからcpp, hファイル作成
-	ruby ccbMake.rb ccbファイル名
-##空でcpp, hファイルを作成
+#install
+
+~/bash_profileに
+export PATH=[scaffold/binへのパス]:$PATH
+例) export PATH=~/scaffold/bin:$PATH
+
+を追加する
+
+#使い方
+
+#ccbファイルを使わずに作成する場合
+#ターミナルで次のコマンドを入力する
+
+ccb-gen
 
 
+#ccbファイルを使用してコマンドを作成する場合
+
+ccb-gen example.ccb

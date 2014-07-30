@@ -11,6 +11,13 @@ superClass:
     - LayerDialog
     - CCBAnimationRegister
     - CCBSelectorResolver
+  NodeDialog:
+    include:
+      header:
+      - NodeDialog
+    includeClass:
+    - Node
+    - NodeDialog
   SuperButton:
     include:
       header:
@@ -25,10 +32,26 @@ superClass:
       - SuperButton
     includeClass:
     - SuperButton::Listener
+  RequestBase:
+    include:
+      header:
+      - RequestBase
+    includeClass:
+    - RequestBase
+  Node:
+    includeClass:
+    - Node
+  cocosbuilder::CCBMemberVariableAssigner:
+    include:
+      header:
+      - Dialog
+    includeClass:
+    - cocosbuilder::CCBMemberVariableAssigner
 method:
   Node:
     public:
     - virtual: 1
+      static: 0
       return: void
       name: update
       args:
@@ -37,10 +60,12 @@ method:
   SuperButton:
     public:
     - virtual: 1
+      static: 0
       return: void
       name: beginDialog
       args: []
     - virtual: 1
+      static: 0
       return: void
       name: endDialog
       args: []
@@ -48,6 +73,7 @@ method:
   SuperButton::Listener:
     public:
     - virtual: 1
+      static: 0
       return: void
       name: onTap
       args:
@@ -57,6 +83,7 @@ method:
         name: pTouch
     private:
     - virtual: 0
+      static: 0
       return: void
       name: _setSuperButtonListener
       args:
@@ -64,19 +91,56 @@ method:
         name: name
       - type: Node*
         name: pNode
-  LayerDialog:
+  NodeDialog:
     public:
     - virtual: 1
+      static: 0
       return: void
       name: beginDialog
       args: []
     - virtual: 1
+      static: 0
       return: void
       name: endDialog
       args: []
+    - virtual: 1
+      static: 0
+      return: bool
+      name: onRegisterVariable
+      args:
+      - type: Ref*
+        name: pTarget
+      - type: const char*
+        name: name
+      - type: Node*
+        name: pNode
+  LayerDialog:
+    public:
+    - virtual: 1
+      static: 0
+      return: void
+      name: beginDialog
+      args: []
+    - virtual: 1
+      static: 0
+      return: void
+      name: endDialog
+      args: []
+    - virtual: 1
+      static: 0
+      return: bool
+      name: onRegisterVariable
+      args:
+      - type: Ref*
+        name: pTarget
+      - type: const char*
+        name: name
+      - type: Node*
+        name: pNode
   CCBSelectorResolver:
     public:
     - virtual: 1
+      static: 0
       return: SEL_MenuHandler
       name: onResolveCCBCCMenuItemSelector
       args:
@@ -85,6 +149,7 @@ method:
       - type: const char*
         name: name
     - virtual: 1
+      static: 0
       return: SEL_CallFuncN
       name: onResolveCCBCCCallFuncSelector
       args:
@@ -93,6 +158,7 @@ method:
       - type: const char*
         name: name
     - virtual: 1
+      static: 0
       return: cocos2d::extension::Control::Handler
       name: onResolveCCBCCControlSelector
       args:
@@ -103,6 +169,7 @@ method:
   CCBAnimationRegister:
     public:
     - virtual: 1
+      static: 0
       return: SEL_CallFuncN
       name: onRegisterCallFunction
       args:
@@ -111,24 +178,29 @@ method:
       - type: const char*
         name: name
     - virtual: 1
+      static: 0
       return: void
       name: completedAnimationSequenceNamed
       args:
       - type: const char*
         name: name
-  CCBVariableRegister:
+  cocosbuilder::CCBMemberVariableAssigner:
     public:
     - virtual: 1
-      return: SEL_MenuHandler
-      name: onRegisterMenuItem
+      static: 0
+      return: bool
+      name: onAssignCCBCustomProperty
       args:
       - type: Ref*
-        name: pObject
+        name: pTarget
       - type: const char*
         name: name
+      - type: const Value&
+        name: value
     - virtual: 1
+      static: 0
       return: bool
-      name: onRegisterVariable
+      name: onAssignCCBMemberVariable
       args:
       - type: Ref*
         name: pTarget
@@ -136,3 +208,14 @@ method:
         name: name
       - type: Node*
         name: pNode
+  RequestBase:
+    public:
+    - virttual: 0
+      static: 1
+      return: $this$*
+      name: create
+      args: []
+      context: '$t$$this$* obj = F10new($this$());$n$$t$obj->setKey();$n$$t$obj->setVal("1");$n$$t$return obj;$n$'
+
+
+

@@ -17,7 +17,7 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 		makePublic+
 		makeConstructor+
 		makeDestructor+
-		loadCcb+
+		createFunc+
 
 #public method
 		publicMethod+
@@ -37,10 +37,14 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 	def loadCcbConfig
 		@ccbConfig = YAML.load_file(CCB_CONFIG_FILE)
 	end
-	def loadCcb
-		makePublic+
-		"\tCREATE_FUNC(#{@className});\n"+
-		"\n"
+	def createFunc
+		if @method.key? "Node"
+			makePublic+
+			"\tCREATE_FUNC(#{@className});\n"+
+			"\n"
+		else
+			""
+		end
 	end
 	def animationMethod
 		methodText = ""

@@ -101,9 +101,13 @@ class CppMaker < FileMaker
 	end
 	def makeMethod param, methodContext = ""
 
+		if param.key?("context")
+			methodContext = ymlFilter(param["context"])
+		end
+
 		methodText = makeMethodComment(param["name"])
 		#return param
-		methodText += param["return"] + "\s"
+		methodText += ymlFilter(param["return"]) + "\s"
 		#ClassName
 		methodText += @className + "::"
 		#methodName

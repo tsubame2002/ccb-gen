@@ -1,4 +1,4 @@
-require_relative "./fileMakerConsole"
+	require_relative "./fileMakerConsole"
 require_relative "./ccbNodeMaker"
 require_relative "./ccbNodeHeaderMaker"
 
@@ -9,6 +9,7 @@ class CcbFileMakerConsole < FileMakerConsole
 	def init
 		@animation = []
 		@callback = []
+		@customClasses = []
 	end
 	def displayStartMenu
 		system "clear"
@@ -87,16 +88,21 @@ class CcbFileMakerConsole < FileMakerConsole
 		superClassList = []
 		@selectedSuperClass.each do |key, value|
 			superClassList.push value
-			if @ccbConfig['superClass'][value]['include'].key? "header"
-				@ccbConfig['superClass'][value]['include']["header"].each do |headerInclude|
-					includeFiles['header'].push headerInclude
+			if @ccbConfig['superClass'][value].key? "include"
+				if @ccbConfig['superClass'][value]['include'].key? "header"
+					@ccbConfig['superClass'][value]['include']["header"].each do |headerInclude|
+						includeFiles['header'].push headerInclude
+					end
+				end
+				if @ccbConfig['superClass'][value]['include'].key? "cpp"
+					@ccbConfig['superClass'][value]['include']["cpp"].each do |cppInclude|
+						includeFiles['cpp'].push cppInclude
+					end
 				end
 			end
-			if @ccbConfig['superClass'][value]['include'].key? "cpp"
-				@ccbConfig['superClass'][value]['include']["cpp"].each do |cppInclude|
-					includeFiles['cpp'].push cppInclude
-				end
-			end
+		end
+		@customClasses.each do |value|
+			includeFiles['cpp'].push value
 		end
 		#method
 		@selectedSuperClass.each do |key, value|
@@ -126,5 +132,5 @@ class CcbFileMakerConsole < FileMakerConsole
 		end
 	end
 
-	attr_accessor :ccbConfig, :selectedSuperClass, :animation, :callback
+	attr_accessor :ccbConfig, :selectedSuperClass, :animation, :callback, :customClasses
 end
