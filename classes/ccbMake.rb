@@ -82,9 +82,11 @@ ccbFile.each do |line|
 		nodeStyleStack.pop
 		nodeStyleCnt -= 1
 		arr = arrayStack.pop
-		key = keyStack.pop
-		keyStackCnt -= 1
-		nodeStack.last[key] = arr
+		if nodeStyleStack.last == DIC
+			key = keyStack.pop
+			keyStackCnt -= 1
+			nodeStack.last[key] = arr
+		end
 	elsif /.*<array\/>.*/ =~ line then
 		value = Array.new
 		if nodeStyleStack.last == DIC
