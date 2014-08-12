@@ -55,11 +55,13 @@ private
 		word = uCaseOnlyFirst(word)
 		word = word.gsub(/_[a-z]/){|w| w.upcase}
 		word = word.gsub(/_/){|w| ""}
+		word = word.gsub(/\s/){|w| ""}
 	end
 	def defineUpcase word
 		word.strip!
 		word = word.gsub(/^[A-Za-z]/){|w| w.downcase}
 		word = word.gsub(/[A-Z]/){|w| "_" + w}
+		word = word.gsub(/\s/){|w| ""}
 		word = word.upcase
 	end
 	def ymlFilter word
