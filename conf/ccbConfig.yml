@@ -32,6 +32,7 @@ superClass:
       - SuperButton
     includeClass:
     - SuperButton::Listener
+    - CCBSelectorResolver
   RequestBase:
     include:
       header:
