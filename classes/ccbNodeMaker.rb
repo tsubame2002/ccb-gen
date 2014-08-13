@@ -182,6 +182,9 @@ class CcbNodeMaker < CppMaker
 				methodContext += "\treturn NULL;\n"
 			end
 		end
+		elsif param['name'] == "endDialog"
+			methodContext += "\tm_animationManager->setDelegate(NULL);\n"
+		end
 		return methodContext
 	end
 	def checkSuperButton param, methodContext
