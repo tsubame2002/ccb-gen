@@ -18,6 +18,7 @@ superClass:
     includeClass:
     - Node
     - NodeDialog
+    - CCBAnimationRegister
   SuperButton:
     include:
       header:
