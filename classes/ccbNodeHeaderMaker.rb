@@ -26,6 +26,7 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 		animationMethod+
 		callbackMethod+
 #private member
+		privateEnum+
 		privateMember+
 		animationManager+
 
@@ -62,6 +63,32 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 		end
 		return methodText
 	end
+	def privateEnum
+		privateEnum = ""
+		enumList = []
+		@customClasses.each do |value|
+			if value["customClass"] == "SuperButton"
+				memberName = value["memberVarAssignmentName"]
+				customProperties = value["customProperties"]
+				id = ""
+				customProperties.each do |property|
+					if(property["name"] == "id")
+						id = property["value"]
+					end
+				end
+				param = {:key => defineUpcase(memberName), :value => id}
+				enumList.push param
+			end
+		end
+		enumList.uniq!
+		if enumList.empty? == false
+			privateEnum += "enum {\n"
+			enumList.each do |value|
+				privateEnum += "\t#{value[:key]} = #{value[:value]}\n"
+			end
+			privateEnum += "}\n"
+		end
+	end
 	def animationManager
 		if @animation.size > 1
 			"\tCCBAnimationManager* m_animationManager;\n"
@@ -69,5 +96,5 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 			""
 		end
 	end
-	attr_accessor :animation, :callback
+	attr_accessor :animation, :callback, :customClasses
 end

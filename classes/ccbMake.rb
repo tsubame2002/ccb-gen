@@ -161,7 +161,6 @@ ccbFile.each do |line|
 				elsif nodeStyleStack.last == ARR
 					arrayStack.last.push value
 				end
-				puts value
 				lineValue = ""
 				isOnLine = false
 			elsif(startLine?(line) || isOnLine)
@@ -182,7 +181,8 @@ KEY_NAME = {
 	:ASSIGN_NAME => "memberVarAssignmentName",
 	:CHAIGNED_SEQUENCE_ID => "chainedSequenceId",
 	:ANIMATION_NAME => "name",
-	:CALLBACK_CHANNEL => "callbackChannel"
+	:CALLBACK_CHANNEL => "callbackChannel",
+	:CUSTOM_PROPERTIES => "customProperties"
 
 }
 DONT_ASSGIN = 0
@@ -214,6 +214,8 @@ class CcbData
 					if @loopCnt <= 2 && value.empty? == false
 						@rootClassName = value
 					end
+				when KEY_NAME[:CUSTOM_PROPERTIES]
+					node[KEY_NAME[:CUSTOM_PROPERTIES]] = value
 				when KEY_NAME[:BASE_CLASS]
 					node[KEY_NAME[:BASE_CLASS]] = value
 				when KEY_NAME[:ASSIGN_TYPE]
@@ -240,7 +242,10 @@ class CcbData
 							@member[node[KEY_NAME[:ASSIGN_NAME]]] = node[KEY_NAME[:BASE_CLASS]]
 						else
 							@member[node[KEY_NAME[:ASSIGN_NAME]]] = node[KEY_NAME[:CUSTOM_CLASS]]
-							@customClasses.push node[KEY_NAME[:CUSTOM_CLASS]]
+							customProperties = {}
+							customProperties[KEY_NAME[:CUSTOM_CLASS]] = node[KEY_NAME[:CUSTOM_CLASS]]
+							customProperties[KEY_NAME[:CUSTOM_PROPERTIES]] = node[KEY_NAME[:CUSTOM_PROPERTIES]]
+							@customClasses.push node
 						end
 					end
 				end
@@ -250,7 +255,6 @@ class CcbData
 				node[KEY_NAME[:CALLBACK_CHANNEL]]['keyframes'].each do |callback|
 					@callback.push callback['value'][0]
 				end
-
 			end
 		end
 		@loopCnt -= 1
@@ -266,5 +270,5 @@ console.member = ccbData.member
 console.className = ccbData.rootClassName
 console.animation = ccbData.animation
 console.callback = ccbData.callback
-console.customClasses = ccbData.customClasses.uniq
+console.customClasses = ccbData.customClasses
 console.startMenu

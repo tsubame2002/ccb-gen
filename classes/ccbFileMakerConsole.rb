@@ -101,7 +101,12 @@ class CcbFileMakerConsole < FileMakerConsole
 				end
 			end
 		end
+		customClassNames = []
 		@customClasses.each do |value|
+			customClassNames.push value["customClass"]
+		end
+		customClassNames.uniq!
+		customClassNames.each do |value|
 			includeFiles['cpp'].push value
 		end
 		#method
@@ -116,9 +121,11 @@ class CcbFileMakerConsole < FileMakerConsole
 		ccbNodeMaker = CcbNodeMaker.new(@config, @className, member, includeFiles, superClassList, method)
 		ccbNodeMaker.animation = @animation
 		ccbNodeMaker.callback = @callback
+		ccbNodeMaker.customClasses = @customClasses
 		ccbNodeHeaderMaker = CcbNodeHeaderMaker.new(@config, @className, member, includeFiles, superClassList, method)
 		ccbNodeHeaderMaker.animation = @animation
 		ccbNodeHeaderMaker.callback = @callback
+		ccbNodeHeaderMaker.customClasses = @customClasses
 		
 		ccbNodeMaker.generateFile
 		ccbNodeHeaderMaker.generateFile

@@ -6,6 +6,7 @@ class CcbNodeMaker < CppMaker
 	@@ccbConfig
 	def makeFile
 		loadCcbConfig
+		loadSuperButton
 #headerComment
 		makeHeaderComment+
 #include
@@ -30,6 +31,28 @@ class CcbNodeMaker < CppMaker
 	end
 	def loadCcbConfig
 		@ccbConfig = YAML.load_file(CCB_CONFIG_FILE)
+	end
+	def loadSuperButton
+		@superButtons = []
+		@customClasses.each do |value|
+			if value["customClass"] == "SuperButton"
+				memberName = value["memberVarAssignmentName"]
+				customProperties = value["customProperties"]
+				id = ""
+				customProperties.each do |property|
+					if(property["name"] == "id")
+						id = property["value"]
+					end
+				end
+				ccbKey = memberName.sub(/m_/,'')
+				superButton = {
+					:name => memberName,
+					:id   => id,
+					:ccbKey => ccbKey
+				}
+				@superButtons.push superButton
+			end
+		end
 	end
 	def makeClear
 		clearMehodContext = ""
@@ -188,31 +211,29 @@ class CcbNodeMaker < CppMaker
 		#check SuperButton
 		if(param["name"] == "_setSuperButtonListener")
 			cnt = 0
-			@member.each do |key, value|
-				if value == "SuperButton*"
-					ccbKey = key.sub(/m_/,'')
-					if cnt == 0
-						methodContext += "\tif\s(\sname\s==\sstrstr(name, \"#{ccbKey}\"))\s{\n"
-					else
-						methodContext += "\selse\sif\s(\sname\s==\sstrstr(name, \"#{ccbKey}\"))\s{\n"
-					end
-						methodContext += "\t\t#{key}\s=\sstatic_cast<SuperButton*>(pNode);\n"
-						methodContext += "\t\t#{key}->setListener(this);\n"
-						methodContext += "\t\t#{key}->setId();\n"
-						methodContext += "\t}"
-					cnt += 1
+			@superButtons.each do |value|
+				if cnt == 0
+					methodContext += "\tif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
+				else
+					methodContext += "\selse\sif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
 				end
+					methodContext += "\t\t#{value[:name]}\s=\sstatic_cast<SuperButton*>(pNode);\n"
+					methodContext += "\t\t#{value[:name]}->setListener(this);\n"
+					methodContext += "\t\t#{value[:name]}->setId(#{defineUpcase(value[:name])});\n"
+					methodContext += "\t}"
+				cnt += 1
 			end
 			methodContext += "\n"
 		elsif (param["name"] == "onTap")
-			hasSuperButton = false
-			param["args"].each do |value|
-				if value["type"] == "SuperButton*"
-					hasSuperButton = true
-				end
-			end
-			if hasSuperButton
+			if @superButtons.empty? == false
 				methodContext += "\tint\sbuttonId\s=\spButton->getId();\n"
+				methodContext += "\tswitch(buttonId)\n"
+				methodContext += "\t{\n"
+				@superButtons.each do |value|
+					methodContext += "\t\tcase #{defineUpcase(value[:name])}:\n"
+					methodContext += "\t\tbreak;\n"
+				end
+				methodContext += "\t}\n"
 			end
 				
 		end
@@ -221,5 +242,5 @@ class CcbNodeMaker < CppMaker
 	def parseAnimationDefine word
 		"ANIMATION_" + defineUpcase(word)
 	end
-	attr_accessor :animation, :callback
+	attr_accessor :animation, :callback, :customClasses, :superButtons
 end
