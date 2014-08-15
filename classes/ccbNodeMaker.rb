@@ -181,7 +181,6 @@ class CcbNodeMaker < CppMaker
 			if cnt > 0
 				methodContext += "\treturn NULL;\n"
 			end
-		end
 		elsif param['name'] == "endDialog"
 			methodContext += "\tm_animationManager->setDelegate(NULL);\n"
 		end

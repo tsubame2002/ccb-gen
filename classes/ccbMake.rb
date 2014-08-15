@@ -13,6 +13,29 @@ class Element
 	attr_accessor :nodes, :param
 end
 
+def oneLine? line
+	if /.*<.*>.*<\/.*>.*/ =~ line then
+		return true
+	else
+		return false
+	end
+end
+def startLine? line
+	if /.*<.*>.*/ =~ line then
+		return true
+	else
+		return false
+	end
+end
+
+def endLine? line
+	if /.*<\/.*>.*/ =~ line then
+		return true
+	else
+		return false
+	end
+end
+
 def parseValue line
 	if /.*<false\/>.*/ =~ line then
 		return false
@@ -45,6 +68,8 @@ keyStack.push "main"
 layerCnt = 1
 nodeStyleCnt = 1
 keyStackCnt = 1
+lineValue = ""
+isOnLine = false
 
 ccbFile.each do |line|
 	if /.*<plist.*/ =~ line then
@@ -101,7 +126,7 @@ ccbFile.each do |line|
 	elsif /.*<key>.*/ =~ line then
 		keyStack.push parseValue(line)
 		keyStackCnt += 1
-	else
+	elsif /.*<false\/>.*/ =~ line || /.*<true\/>.*/ =~ line then
 		value = parseValue(line)
 		if nodeStyleStack.last == DIC
 			key = keyStack.last
@@ -111,7 +136,41 @@ ccbFile.each do |line|
 		elsif nodeStyleStack.last == ARR
 			arrayStack.last.push value
 		end
+	elsif /.*<\?xml.*\?>.*/ =~ line || /.*<!DOCTYPE.*>.*/ =~ line then
+
+	else
+		if(oneLine?(line))
+			value = parseValue(line)
+			if nodeStyleStack.last == DIC
+				key = keyStack.last
+				nodeStack.last[key] = value
+				keyStack.pop
+				keyStackCnt -= 1
+			elsif nodeStyleStack.last == ARR
+				arrayStack.last.push value
+			end
+		else
+			if(endLine?(line))
+				lineValue += line.chomp
+				value = parseValue(lineValue)
+				if nodeStyleStack.last == DIC
+					key = keyStack.last
+					nodeStack.last[key] = value
+					keyStack.pop
+					keyStackCnt -= 1
+				elsif nodeStyleStack.last == ARR
+					arrayStack.last.push value
+				end
+				puts value
+				lineValue = ""
+				isOnLine = false
+			elsif(startLine?(line) || isOnLine)
+				lineValue += line.chomp
+				isOnLine = true
+			end
+		end
 	end
+	# puts "#{line.chomp} : key > #{keyStack.last}"
 end
 result  = nodeStack.pop['main']
 
