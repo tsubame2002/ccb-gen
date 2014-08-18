@@ -88,6 +88,7 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 			end
 			privateEnum += "}\n"
 		end
+		return privateEnum
 	end
 	def animationManager
 		if @animation.size > 1
