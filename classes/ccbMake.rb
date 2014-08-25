@@ -122,7 +122,16 @@ ccbFile.each do |line|
 		elsif nodeStyleStack.last == ARR
 			arrayStack.last.push value
 		end
-				
+	elsif /.*<dict\/>.*/ =~ line then
+		value = {}
+		if nodeStyleStack.last == DIC
+			key = keyStack.last
+			nodeStack.last[key] = value
+			keyStack.pop
+			keyStackCnt -= 1
+		elsif nodeStyleStack.last == ARR
+			arrayStack.last.push value
+		end
 	elsif /.*<key>.*/ =~ line then
 		keyStack.push parseValue(line)
 		keyStackCnt += 1
@@ -169,7 +178,6 @@ ccbFile.each do |line|
 			end
 		end
 	end
-	# puts "#{line.chomp} : key > #{keyStack.last}"
 end
 result  = nodeStack.pop['main']
 
