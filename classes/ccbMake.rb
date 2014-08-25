@@ -14,7 +14,7 @@ class Element
 end
 
 def oneLine? line
-	if /.*<.*>.*<\/.*>.*/ =~ line then
+	if /.*<.*>.*<\/.*>.*/ =~ line || /.*<.*\/>.*/ =~ line then
 		return true
 	else
 		return false
@@ -119,18 +119,8 @@ ccbFile.each do |line|
 			keyStackCnt -= 1
 			nodeStack.last[key] = arr
 		end
-	elsif /.*<.*\/>.*/ =~ line then
-		value = parseValue(line)
-		if nodeStyleStack.last == DIC
-			key = keyStack.last
-			nodeStack.last[key] = value
-			keyStack.pop
-			keyStackCnt -= 1
-		elsif nodeStyleStack.last == ARR
-			arrayStack.last.push value
-		end
 	elsif /.*<\?xml.*\?>.*/ =~ line || /.*<!DOCTYPE.*>.*/ =~ line then
-
+		# nothing to do
 	else
 		if(oneLine?(line))
 			value = parseValue(line)
