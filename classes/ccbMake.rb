@@ -41,6 +41,10 @@ def parseValue line
 		return false
 	elsif /.*<true\/>.*/ =~ line then
 		return true
+	elsif /.*<dict\/>.*/ =~ line then
+		return {}
+	elsif /.*<array\/>.*/ =~ line then
+		return Array.new
 	end
 	result = line.gsub(/.*<.*>(.*)<\/.*>.*/, '\1')
 	result = result.strip
@@ -84,6 +88,9 @@ ccbFile.each do |line|
 		layerCnt += 1
 		nodeStack.push element
 		nodeStyleCnt += 1
+	elsif /.*<key>.*/ =~ line then
+		keyStack.push parseValue(line)
+		keyStackCnt += 1
 	elsif /.*<\/dict>.*/ =~ line then
 		nodeStyleStack.pop
 		value = nodeStack.pop
@@ -112,30 +119,7 @@ ccbFile.each do |line|
 			keyStackCnt -= 1
 			nodeStack.last[key] = arr
 		end
-	elsif /.*<array\/>.*/ =~ line then
-		value = Array.new
-		if nodeStyleStack.last == DIC
-			key = keyStack.last
-			nodeStack.last[key] = value
-			keyStack.pop
-			keyStackCnt -= 1
-		elsif nodeStyleStack.last == ARR
-			arrayStack.last.push value
-		end
-	elsif /.*<dict\/>.*/ =~ line then
-		value = {}
-		if nodeStyleStack.last == DIC
-			key = keyStack.last
-			nodeStack.last[key] = value
-			keyStack.pop
-			keyStackCnt -= 1
-		elsif nodeStyleStack.last == ARR
-			arrayStack.last.push value
-		end
-	elsif /.*<key>.*/ =~ line then
-		keyStack.push parseValue(line)
-		keyStackCnt += 1
-	elsif /.*<false\/>.*/ =~ line || /.*<true\/>.*/ =~ line then
+	elsif /.*<.*\/>.*/ =~ line then
 		value = parseValue(line)
 		if nodeStyleStack.last == DIC
 			key = keyStack.last
