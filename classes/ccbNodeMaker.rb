@@ -70,7 +70,7 @@ class CcbNodeMaker < CppMaker
 	def makeDestroy
 		destroyMethodContext = ""
 		@member.each do |key, value|
-			destroyMethodContext += "\tCC_SAFE_RELEASE_NULL(#{key});\n"
+			destroyMethodContext += "\DIALOG_UNREGISTER_VARIABLE(#{key});\n"
 		end
 		param = {
 			'virtual' => 0,
@@ -216,6 +216,7 @@ class CcbNodeMaker < CppMaker
 					methodContext += "\telse\sif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
 				end
 				methodContext += "\t\tm_#{value[:name]}\s=\sstatic_cast<SuperButton*>(pNode);\n"
+				methodContext += "\t\tm_#{value[:name]}->retain();\n"
 				methodContext += "\t\tm_#{value[:name]}->setListener(this);\n"
 				methodContext += "\t\tm_#{value[:name]}->setId(#{defineUpcase(value[:name])});\n"
 				methodContext += "\t}"
