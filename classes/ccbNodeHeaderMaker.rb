@@ -83,19 +83,19 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 		enumList.uniq!
 		if enumList.empty? == false
 			privateEnum += "enum {\n"
-			enumList.each do |value|
-				privateEnum += "\t#{value[:key]} = #{value[:value]}\n"
+			enumList.each do |value, i|
+				if value[:value].empty?
+					privateEnum += "\t#{value[:key]},\n"
+				else
+					privateEnum += "\t#{value[:key]} = #{value[:value]},\n"
+				end
 			end
-			privateEnum += "}\n"
+			privateEnum += "};\n"
 		end
 		return privateEnum
 	end
 	def animationManager
-		if @animation.size > 1
-			"\tCCBAnimationManager* m_animationManager;\n"
-		else
-			""
-		end
+		"\tCCBAnimationManager* m_animationManager;\n"
 	end
 	attr_accessor :animation, :callback, :customClasses
 end

@@ -183,25 +183,24 @@ class CcbNodeMaker < CppMaker
 	end
 	def checkAnimation param, methodContext
 		if(param['name'] == "completedAnimationSequenceNamed")
-			cnt = 0
 			@animation.each do |value|
 				unless value == "Default Timeline"
 					methodContext += "\tif(strcmp(name, #{parseAnimationDefine(value)}) == 0)\n"
 					methodContext += "\t{\n"
 					methodContext += "\t}\n"
-					cnt += 1
 				end
 			end
-			if cnt > 0
-				methodContext += "\tm_animationManager->setDelegate(NULL);\n"
+			if @animation.size > 0
+				methodContext += "\tif(m_animationManager != NULL)\n"
+				methodContext += "\t{\n"
+				methodContext += "\t\tm_animationManager->setDelegate(NULL);\n"
+				methodContext += "\t}\n"
 			end
 		elsif param['name'] == "onResolveCCBCCCallFuncSelector"
-			cnt = 0
 			@callback.each do |value|
 				methodContext += "\tDIALOG_REGISTER_CALLBACK(this,\s\"#{value}\",\s#{@className}::_callback#{parseUpperCamel(value)});\n"
-				cnt += 1
 			end
-			if cnt > 0
+			if @callback.size > 0
 				methodContext += "\treturn NULL;\n"
 			end
 		end
@@ -210,18 +209,16 @@ class CcbNodeMaker < CppMaker
 	def checkSuperButton param, methodContext
 		#check SuperButton
 		if(param["name"] == "_setSuperButtonListener")
-			cnt = 0
-			@superButtons.each do |value|
-				if cnt == 0
+			@superButtons.each_with_index do |value, i|
+				if i == 0
 					methodContext += "\tif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
 				else
-					methodContext += "\selse\sif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
+					methodContext += "\telse\sif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
 				end
-					methodContext += "\t\t#{value[:name]}\s=\sstatic_cast<SuperButton*>(pNode);\n"
-					methodContext += "\t\t#{value[:name]}->setListener(this);\n"
-					methodContext += "\t\t#{value[:name]}->setId(#{defineUpcase(value[:name])});\n"
-					methodContext += "\t}"
-				cnt += 1
+				methodContext += "\t\tm_#{value[:name]}\s=\sstatic_cast<SuperButton*>(pNode);\n"
+				methodContext += "\t\tm_#{value[:name]}->setListener(this);\n"
+				methodContext += "\t\tm_#{value[:name]}->setId(#{defineUpcase(value[:name])});\n"
+				methodContext += "\t}"
 			end
 			methodContext += "\n"
 		elsif (param["name"] == "onTap")

@@ -115,14 +115,12 @@ class CppMaker < FileMaker
 
 		#param
 		methodText += "("
-		cnt = 0
-		param["args"].each do |value|
-			if cnt == 0
+		param["args"].each_with_index do |value, i|
+			if i == 0
 				methodText += value["type"] + "\s" + value["name"]
 			else
 				methodText += ",\s" + value["type"] + "\s" + value["name"]
 			end
-			cnt += 1
 		end
 		methodText += ")\n"
 		#methodBegin

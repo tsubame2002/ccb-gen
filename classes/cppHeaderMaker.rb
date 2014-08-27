@@ -47,19 +47,22 @@ class CppHeaderMaker < FileMaker
 		@includeFile["header"].each do |value|
 			includeText += "#include \"#{value}.h\"\n"
 		end
+		includeText += "\n"
+		@includeFile["cpp"].each do |value|
+
+			includeText += "class #{value};\n"
+		end
 		return includeText
 
 	end
 	def classStart
 		classStartText = "class #{@className}"
-		i = 0
-		@superClass.each do |className|
+		@superClass.each_with_index do |className, i|
 			if i == 0
 				classStartText += " : public #{className}"
 			else
 				classStartText += ", public #{className}"
 			end
-			i += 1
 		end
 		classStartText += "\n{\n"
 		return classStartText
@@ -153,14 +156,12 @@ class CppHeaderMaker < FileMaker
 
 		#param
 		methodText += "("
-		cnt = 0
-		param["args"].each do |value|
-			if cnt == 0
+		param["args"].each_with_index do |value, i|
+			if i == 0
 				methodText += value["type"] + "\s" + value["name"]
 			else
 				methodText += ",\s" + value["type"] + "\s" + value["name"]
 			end
-			cnt += 1
 		end
 		methodText += ");\n"
 		return methodText
