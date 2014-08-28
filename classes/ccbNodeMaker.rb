@@ -59,6 +59,7 @@ class CcbNodeMaker < CppMaker
 		@member.each do |key, value|
 			clearMehodContext += "\t#{key}\t\s=\sNULL;\n"
 		end
+		clearMehodContext += "\tm_animationManager\s=\sNULL;\n"
 		param = {
 			'virtual' => 0,
 			'return' => "void",
@@ -70,7 +71,7 @@ class CcbNodeMaker < CppMaker
 	def makeDestroy
 		destroyMethodContext = ""
 		@member.each do |key, value|
-			destroyMethodContext += "\DIALOG_UNREGISTER_VARIABLE(#{key});\n"
+			destroyMethodContext += "\tDIALOG_UNREGISTER_VARIABLE(#{key});\n"
 		end
 		param = {
 			'virtual' => 0,
