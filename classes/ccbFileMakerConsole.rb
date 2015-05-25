@@ -74,6 +74,9 @@ class CcbFileMakerConsole < FileMakerConsole
 
 		member = {}
 		@member.each do |key, value|
+			if key == "fsButton"
+				next
+			end
 			memberName = "m_" + key
 			nodeName = value + "*"
 			member[memberName] = nodeName

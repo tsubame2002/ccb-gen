@@ -35,7 +35,7 @@ class CcbNodeMaker < CppMaker
 	def loadSuperButton
 		@superButtons = []
 		@customClasses.each do |value|
-			if value["customClass"] == "SuperButton"
+			if value["customClass"] == "SuperButton" || value["customClass"] == "FSButton"
 				memberName = value["memberVarAssignmentName"]
 				customProperties = value["customProperties"]
 				id = ""
@@ -166,11 +166,14 @@ class CcbNodeMaker < CppMaker
 	end
 	def checkRegisterVariable param, methodContext
 		if(param['name'] == "onRegisterVariable" || param['name'] == "onAssignCCBMemberVariable")
+			if @member.has_value?("FSButton*")
+				methodContext += "\t_setButtonListener(name, pNode);\n\n"
+			end
 			if @member.has_value?("SuperButton*")
 				methodContext += "\t_setSuperButtonListener(name, pNode);\n\n"
 			end
 			@member.each do |key, value|
-				if value != "SuperButton*"
+				if value != "SuperButton*" && value != "FSButton*"
 					ccbKey = key.sub(/m_/,'')
 					methodContext += "\tDIALOG_REGISTER_VARIABLE_NODE(this, \"#{ccbKey}\", #{value}, #{key});\n"
 				end
@@ -223,12 +226,35 @@ class CcbNodeMaker < CppMaker
 				methodContext += "\t}"
 			end
 			methodContext += "\n"
+		elsif(param["name"] == "_setButtonListener")
+			methodContext += "\tif\s(\sname\s==\sstrstr(name, \"fsButton\"))\s{\n"
+			methodContext += "\t\tFSButton* pButton\s=\sstatic_cast<FSButton*>(pNode);\n"
+			methodContext += "\t\tpButton->setListener(this);\n"
+			methodContext += "\t}\n"
+
+			@superButtons.each_with_index do |value, i|
+				if value[:ccbKey] == "fsButton"
+					next
+				end
+				if i == 0
+					methodContext += "\tif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
+				else
+					methodContext += "\telse\sif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
+				end
+				methodContext += "\t\tm_#{value[:name]}\s=\sstatic_cast<FSButton*>(pNode);\n"
+				methodContext += "\t\tm_#{value[:name]}->setListener(this);\n"
+				methodContext += "\t}"
+			end
+			methodContext += "\n"
 		elsif (param["name"] == "onTap")
 			if @superButtons.empty? == false
 				methodContext += "\tint\sbuttonId\s=\spButton->getId();\n"
 				methodContext += "\tswitch(buttonId)\n"
 				methodContext += "\t{\n"
 				@superButtons.each do |value|
+					if defineUpcase(value[:name]) == "FS_BUTTON"
+						next
+					end
 					methodContext += "\t\tcase #{defineUpcase(value[:name])}:\n"
 					methodContext += "\t\tbreak;\n"
 				end

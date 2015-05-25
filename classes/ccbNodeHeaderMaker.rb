@@ -67,7 +67,7 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 		privateEnum = ""
 		enumList = []
 		@customClasses.each do |value|
-			if value["customClass"] == "SuperButton"
+			if value["customClass"] == "SuperButton" || value["customClass"] == "FSButton"
 				memberName = value["memberVarAssignmentName"]
 				customProperties = value["customProperties"]
 				id = ""
@@ -77,7 +77,9 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 					end
 				end
 				param = {:key => defineUpcase(memberName), :value => id}
-				enumList.push param
+				if defineUpcase(memberName) != "FS_BUTTON"
+					enumList.push param
+				end
 			end
 		end
 		enumList.uniq!

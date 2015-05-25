@@ -1,5 +1,20 @@
 ---
 superClass:
+  FSNode:
+    include:
+      header:
+      - FSNode
+    includeClass:
+      - Node
+      - FSNode
+      - CCBAnimationRegister
+  FSButton::Listener:
+    include:
+      header:
+      - FSButton
+    includeClass:
+    - FSButton::Listener
+    # - CCBSelectorResolver
   LayerDialog:
     include:
       header:
@@ -59,6 +74,62 @@ method:
       args:
       - type: float
         name: dt
+  FSNode:
+    public:
+    - virtual: 1
+      static: 0
+      return: void
+      name: onStart
+      args: []
+    - virtual: 1
+      static: 0
+      return: void
+      name: onEnd
+      args: []
+    - virtual: 1
+      static: 0
+      return: bool
+      name: onRegisterVariable
+      args:
+      - type: Ref*
+        name: pTarget
+      - type: const char*
+        name: name
+      - type: Node*
+        name: pNode
+  FSButton:
+    public:
+    - virtual: 1
+      static: 0
+      return: void
+      name: onStart
+      args: []
+    - virtual: 1
+      static: 0
+      return: void
+      name: onEnd
+      args: []
+  FSButton::Listener:
+    public:
+    - virtual: 1
+      static: 0
+      return: void
+      name: onTap
+      args:
+      - type: FSButton*
+        name: pButton
+      - type: Touch*
+        name: pTouch
+    private:
+    - virtual: 0
+      static: 0
+      return: void
+      name: _setButtonListener
+      args:
+      - type: const char*
+        name: name
+      - type: Node*
+        name: pNode
   SuperButton:
     public:
     - virtual: 1
@@ -170,15 +241,15 @@ method:
         name: name
   CCBAnimationRegister:
     public:
-    - virtual: 1
-      static: 0
-      return: SEL_CallFuncN
-      name: onRegisterCallFunction
-      args:
-      - type: Ref*
-        name: pTarget
-      - type: const char*
-        name: name
+    # - virtual: 1
+    #   static: 0
+    #   return: SEL_CallFuncN
+    #   name: onRegisterCallFunction
+    #   args:
+    #   - type: Ref*
+    #     name: pTarget
+    #   - type: const char*
+    #     name: name
     - virtual: 1
       static: 0
       return: void
