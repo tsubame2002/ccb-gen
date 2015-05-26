@@ -71,7 +71,7 @@ class CcbNodeMaker < CppMaker
 	def makeDestroy
 		destroyMethodContext = ""
 		@member.each do |key, value|
-			destroyMethodContext += "\tDIALOG_UNREGISTER_VARIABLE(#{key});\n"
+			destroyMethodContext += "\tCC_SAFE_RELEASE_NULL(#{key});\n"
 		end
 		param = {
 			'virtual' => 0,

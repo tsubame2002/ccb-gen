@@ -113,7 +113,7 @@ method:
     public:
     - virtual: 1
       static: 0
-      return: void
+      return: bool
       name: onTap
       args:
       - type: FSButton*
