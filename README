@@ -3,7 +3,7 @@
 ruby version 1.9以上のみ対応
 
 ~/bash_profileに
-export PATH=[scaffold/binへのパス]:$PATH
+export PATH=[ccb-gen/binへのパス]:$PATH
 例) export PATH=~/scaffold/bin:$PATH
 
 を追加する
