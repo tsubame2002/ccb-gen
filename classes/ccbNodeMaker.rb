@@ -166,11 +166,8 @@ class CcbNodeMaker < CppMaker
 	end
 	def checkRegisterVariable param, methodContext
 		if(param['name'] == "onRegisterVariable" || param['name'] == "onAssignCCBMemberVariable")
-			if @member.has_value?("FSButton*")
+			if @superButtons.size > 0
 				methodContext += "\t_setButtonListener(name, pNode);\n\n"
-			end
-			if @member.has_value?("SuperButton*")
-				methodContext += "\t_setSuperButtonListener(name, pNode);\n\n"
 			end
 			@member.each do |key, value|
 				if value != "SuperButton*" && value != "FSButton*"
