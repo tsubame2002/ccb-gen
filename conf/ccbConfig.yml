@@ -15,40 +15,14 @@ superClass:
     includeClass:
     - FSButton::Listener
     # - CCBSelectorResolver
-  LayerDialog:
+  FSScene:
     include:
       header:
-      - LayerDialog
-      cpp:
-      - UIManager
+      - FSScene
     includeClass:
-    - Node
-    - LayerDialog
-    - CCBAnimationRegister
-    - CCBSelectorResolver
-  NodeDialog:
-    include:
-      header:
-      - NodeDialog
-    includeClass:
-    - Node
-    - NodeDialog
-    - CCBAnimationRegister
-  SuperButton:
-    include:
-      header:
-      - SuperButton
-    includeClass:
-    - SuperButton
-    - Node
-    - CCBSelectorResolver
-  SuperButton::Listener:
-    include:
-      header:
-      - SuperButton
-    includeClass:
-    - SuperButton::Listener
-    - CCBSelectorResolver
+      - Node
+      - FSScene
+
   RequestBase:
     include:
       header:
@@ -97,6 +71,18 @@ method:
         name: name
       - type: Node*
         name: pNode
+  FSScene:
+    public:
+    - virtual: 1
+      static: 0
+      return: void
+      name: beginScene
+      args: []
+    - virtual: 1
+      static: 0
+      return: void
+      name: endScene
+      args: []
   FSButton:
     public:
     - virtual: 1
@@ -126,86 +112,6 @@ method:
       return: void
       name: _setButtonListener
       args:
-      - type: const char*
-        name: name
-      - type: Node*
-        name: pNode
-  SuperButton:
-    public:
-    - virtual: 1
-      static: 0
-      return: void
-      name: beginDialog
-      args: []
-    - virtual: 1
-      static: 0
-      return: void
-      name: endDialog
-      args: []
-
-  SuperButton::Listener:
-    public:
-    - virtual: 1
-      static: 0
-      return: void
-      name: onTap
-      args:
-      - type: SuperButton*
-        name: pButton
-      - type: Touch*
-        name: pTouch
-    private:
-    - virtual: 0
-      static: 0
-      return: void
-      name: _setSuperButtonListener
-      args:
-      - type: const char*
-        name: name
-      - type: Node*
-        name: pNode
-  NodeDialog:
-    public:
-    - virtual: 1
-      static: 0
-      return: void
-      name: beginDialog
-      args: []
-    - virtual: 1
-      static: 0
-      return: void
-      name: endDialog
-      args: []
-    - virtual: 1
-      static: 0
-      return: bool
-      name: onRegisterVariable
-      args:
-      - type: Ref*
-        name: pTarget
-      - type: const char*
-        name: name
-      - type: Node*
-        name: pNode
-  LayerDialog:
-    public:
-    - virtual: 1
-      static: 0
-      return: void
-      name: beginDialog
-      args: []
-    - virtual: 1
-      static: 0
-      return: void
-      name: endDialog
-      args: []
-    - virtual: 1
-      static: 0
-      return: bool
-      name: onRegisterVariable
-      args:
-      - type: Ref*
-        name: pTarget
       - type: const char*
         name: name
       - type: Node*
