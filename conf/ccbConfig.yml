@@ -22,13 +22,6 @@ superClass:
     includeClass:
       - Node
       - FSScene
-
-  RequestBase:
-    include:
-      header:
-      - RequestBase
-    includeClass:
-    - RequestBase
   Node:
     includeClass:
     - Node
@@ -38,6 +31,12 @@ superClass:
       - Dialog
     includeClass:
     - cocosbuilder::CCBMemberVariableAssigner
+  MasterDataBase:
+    include:
+      header:
+      - MasterDataBase
+    includeClass:
+      - MasterDataBase
 method:
   Node:
     public:
@@ -55,11 +54,13 @@ method:
       return: void
       name: onStart
       args: []
+      context: '$t$FSNode::onStart();$n$'
     - virtual: 1
       static: 0
       return: void
       name: onEnd
       args: []
+      context: '$t$FSNode::onEnd();$n$'
     - virtual: 1
       static: 0
       return: bool
@@ -147,15 +148,6 @@ method:
         name: name
   CCBAnimationRegister:
     public:
-    # - virtual: 1
-    #   static: 0
-    #   return: SEL_CallFuncN
-    #   name: onRegisterCallFunction
-    #   args:
-    #   - type: Ref*
-    #     name: pTarget
-    #   - type: const char*
-    #     name: name
     - virtual: 1
       static: 0
       return: void
@@ -187,14 +179,16 @@ method:
         name: name
       - type: Node*
         name: pNode
-  RequestBase:
+  MasterDataBase:
     public:
-    - virttual: 0
+    - virtual: 0
       static: 1
       return: $this$*
       name: create
-      args: []
-      context: '$t$$this$* obj = F10new($this$());$n$$t$obj->setKey();$n$$t$obj->setVal("1");$n$$t$return obj;$n$'
+      args:
+      - type: Json*
+        name: json
+      context: '$t$$this$* data = FSnew( $this$() );$n$$t$return data;$n$'
 
 
 

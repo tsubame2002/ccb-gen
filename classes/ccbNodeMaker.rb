@@ -35,7 +35,7 @@ class CcbNodeMaker < CppMaker
 	def loadSuperButton
 		@superButtons = []
 		@customClasses.each do |value|
-			if value["customClass"] == "SuperButton" || value["customClass"] == "FSButton"
+			if value["customClass"] == "FSButton"
 				memberName = value["memberVarAssignmentName"]
 				customProperties = value["customProperties"]
 				id = ""
@@ -170,7 +170,7 @@ class CcbNodeMaker < CppMaker
 				methodContext += "\t_setButtonListener(name, pNode);\n\n"
 			end
 			@member.each do |key, value|
-				if value != "SuperButton*" && value != "FSButton*"
+				if value != "FSButton*"
 					ccbKey = key.sub(/m_/,'')
 					methodContext += "\tDIALOG_REGISTER_VARIABLE_NODE(this, \"#{ccbKey}\", #{value}, #{key});\n"
 				end
@@ -208,22 +208,7 @@ class CcbNodeMaker < CppMaker
 		return methodContext
 	end
 	def checkSuperButton param, methodContext
-		#check SuperButton
-		if(param["name"] == "_setSuperButtonListener")
-			@superButtons.each_with_index do |value, i|
-				if i == 0
-					methodContext += "\tif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
-				else
-					methodContext += "\telse\sif\s(\sname\s==\sstrstr(name, \"#{value[:ccbKey]}\"))\s{\n"
-				end
-				methodContext += "\t\tm_#{value[:name]}\s=\sstatic_cast<SuperButton*>(pNode);\n"
-				methodContext += "\t\tm_#{value[:name]}->retain();\n"
-				methodContext += "\t\tm_#{value[:name]}->setListener(this);\n"
-				methodContext += "\t\tm_#{value[:name]}->setId(#{defineUpcase(value[:name])});\n"
-				methodContext += "\t}"
-			end
-			methodContext += "\n"
-		elsif(param["name"] == "_setButtonListener")
+		if(param["name"] == "_setButtonListener")
 			methodContext += "\tif\s(\sname\s==\sstrstr(name, \"fsButton\"))\s{\n"
 			methodContext += "\t\tFSButton* pButton\s=\sstatic_cast<FSButton*>(pNode);\n"
 			methodContext += "\t\tpButton->setListener(this);\n"

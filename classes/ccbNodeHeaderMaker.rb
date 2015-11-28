@@ -67,7 +67,7 @@ class CcbNodeHeaderMaker < CppHeaderMaker
 		privateEnum = ""
 		enumList = []
 		@customClasses.each do |value|
-			if value["customClass"] == "SuperButton" || value["customClass"] == "FSButton"
+			if value["customClass"] == "FSButton"
 				memberName = value["memberVarAssignmentName"]
 				customProperties = value["customProperties"]
 				id = ""
